@@ -583,6 +583,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
+			// 每个bean在调用beanFactory.getBean()进行实例化到这一步时，都会先尽早将其暴漏出去，也即放入到一个singletonFactories的map当中，
+			// 这里保存的是当前刚实例化出来的bean的名称与对应ObjectFactory实例的映射关系，也就是一段接口回调通过lambda表示
+			// 在getBean()刚开始时先通过getSingleton(beanName)从这个映射关系中获取bean，这时就会回调到这里的lambda，
+			// 只不过从这里面通过ObjectFactory获取的bean是一个半成品
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
